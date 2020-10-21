@@ -32,15 +32,34 @@ import galleryItems from './gallery-items.js';
 // Пролистывание изображений галереи в открытом модальном окне клавишами "влево" и "вправо".
 
 
-console.log(galleryItems);
+// console.log(galleryItems);
 
 const refs = {
-    list: document.querySelector('.js-gallery')
-
+    list: document.querySelector('.js-gallery'),
+    imgModal: document.querySelector('.lightbox__image'),
+    openModal: document.querySelector('.lightbox')
 }
 
-console.log(refs.list);
+
+
+// console.log(refs.list);
 galleryItems.map(el => {
-   let = item.innertHTML = '<li><a><img></a></li>'
-    
+    refs.list.insertAdjacentHTML("beforeend",`<li class="gallery__item"><a class="gallery__link"><img class="gallery__image" src="${el.preview}" data-source="${el.original}" alt="${el.description}"></a></li>`)
+    document.querySelector('.gallery__image').append(el)
+    // console.log(document.querySelector('.gallery__image'));
 })
+
+const open = function (event) {
+    if (event.target.nodeName === 'IMG') {
+        refs.imgModal.src = event.target.dataset.source
+        refs.imgModal.alt = event.target.alt
+        refs.openModal.classList.add('is-open')
+
+        // console.log(event.target.dataset.source);console.dir(event.target);
+    }
+}
+
+//создать функцию на клик которая будет регировать на клик будет искать таргет (кнопка или бекдроп) снимать слушатель. затирать срц на кортинке на модалке.
+
+
+refs.list.addEventListener('click',open)
