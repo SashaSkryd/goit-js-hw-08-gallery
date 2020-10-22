@@ -1,8 +1,5 @@
 import galleryItems from './gallery-items.js';
 
-// Закрытие модального окна по нажатию клавиши ESC.
-// Пролистывание изображений галереи в открытом модальном окне клавишами "влево" и "вправо".
-
 const refs = {
     list: document.querySelector('.js-gallery'),
     imgModal: document.querySelector('.lightbox__image'),
@@ -16,38 +13,72 @@ galleryItems.map(el => {
     document.querySelector('.gallery__image').append(el)
 })
 
+let idxElement = 0;
 const open = function (event) {
     if (event.target.nodeName === 'IMG') {
         refs.imgModal.src = event.target.dataset.source
         refs.imgModal.alt = event.target.alt
         refs.openModal.classList.add('is-open')
     }
+    galleryItems.map((el, idx) => {
+        if (el.original === event.target.dataset.source) {
+            idxElement = idx 
+         }
+     })
+    refs.openModal.addEventListener('click',close)
+    window.addEventListener("keydown", hendlerKeyDown);
+}
+
+const render = function (idxElement) {
+    refs.imgModal.src = galleryItems[idxElement].original
+     refs.imgModal.alt = galleryItems[idxElement].description
+}
+
+
+const close = function (event) {
+    if (event.target.nodeName !== 'IMG') {
+        refs.imgModal.src = ''
+        refs.imgModal.alt = ''
+        refs.openModal.classList.replace('is-open', 'lightbox')
+    } 
+    
+    refs.openModal.removeEventListener('click',close)
+    window.removeEventListener("keydown", hendlerKeyDown);
+}
+
+const hendlerKeyDown = function (event) {
+  const {key} = event
+    switch (key) {
+        case "Escape":
+              refs.imgModal.src = ''
+        refs.imgModal.alt = ''
+        refs.openModal.classList.replace('is-open', 'lightbox')
+            break
+        case "ArrowRight":
+            if (idxElement === galleryItems.length - 1 ) {
+            idxElement = 0
+        }
+        else {
+            idxElement += 1
+        }
+        render(idxElement)
+            break
+        case "ArrowLeft":
+        if (idxElement === 0) {
+          idxElement = galleryItems.length - 1 
+        }
+        else {
+            idxElement -= 1
+        }
+        render(idxElement)
+            break
+
+    }
 }
 
 refs.list.addEventListener('click',open)
 
-const close = function (event) {
-    if (event.target.nodeName === 'BUTTON') {
-        refs.imgModal.src = ''
-        refs.imgModal.alt = ''
-        refs.openModal.classList.replace('is-open', 'lightbox')
-    } if (event.target.nodeName === 'DIV') {
-        refs.imgModal.src = ''
-        refs.imgModal.alt = ''
-        refs.openModal.classList.replace('is-open', 'lightbox')
-    }
-    // if (event.kyeCode == 27) {
-    //     refs.imgModal.src = ''
-    //     refs.imgModal.alt = ''
-    //     refs.openModal.classList.replace('is-open', 'lightbox')
-    // }
-    // console.dir(event.keyCode);
-}
 
 
-
-refs.openModal.addEventListener('click',close)
-// refs.openModal.addEventListener("keydown", close);
-// refs.openModal.addEventListener("keyup", close);
 
 
